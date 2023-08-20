@@ -13,6 +13,51 @@
         android:theme="@style/Theme.BasicNavApp"
         tools:targetApi="31">
         <activity
+            android:name=".friends.RonnysFriendsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_ronnys_friends"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".friends.FriendsOverViewActivity"
+            android:exported="false"
+            android:label="@string/title_activity_friends_over_view"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".hobbies.HobbiesOverViewActivity"
+            android:exported="false"
+            android:label="@string/title_activity_hobbies_over_view"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".hobbies.LevisHobbiesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_levis_hobbies"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".hobbies.RonnysHobbiesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_ronnys_hobbies"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".friends.LevisFriendsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_levis_friends"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".friends.RonnyFreindsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_ronny_freinds"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".hobbies.CarlosHobbiesAcivity"
+            android:exported="false"
+            android:label="@string/title_activity_carlos_hobbies_acivity"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
+            android:name=".friends.CarlosFriendsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_carlos_friends"
+            android:theme="@style/Theme.BasicNavApp" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
