@@ -43,11 +43,6 @@
             android:label="@string/title_activity_levis_friends"
             android:theme="@style/Theme.BasicNavApp" />
         <activity
-            android:name=".friends.RonnyFreindsActivity"
-            android:exported="false"
-            android:label="@string/title_activity_ronny_freinds"
-            android:theme="@style/Theme.BasicNavApp" />
-        <activity
             android:name=".hobbies.CarlosHobbiesAcivity"
             android:exported="false"
             android:label="@string/title_activity_carlos_hobbies_acivity"

@@ -38,9 +38,7 @@ class HobbiesOverViewActivity : ComponentActivity() {
     fun QuitButton(){
 
         Button(onClick = {
-            val navigate = Intent(this@HobbiesOverViewActivity, MainActivity::class.java)
-            startActivity(navigate)
-            Toast.makeText(this,"Quit", Toast.LENGTH_SHORT).show()
+           finish()
         }) {
             Text(text = "Quit")
 

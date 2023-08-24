@@ -1,12 +1,16 @@
 package com.example.basicnavapp.friends
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.basicnavapp.R
 import com.example.basicnavapp.friends.ui.theme.BasicNavAppTheme
 
@@ -34,24 +39,49 @@ class LevisFriendsActivity : ComponentActivity() {
         }
     }
     @Composable
+    fun QuitButton(){
+
+        Button(onClick = {
+           finish()
+        }) {
+            Text(text = "Back")
+        }
+
+    }
+
+
+    @Composable
     fun Greeting(name: String, modifier: Modifier = Modifier) {
         Column(verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
             Text(
-                text = "Here is a picture with my friends",
+                text = "Here is a recent picture with my friends ",
+
                 modifier = modifier
             )
 
+
             Image(
-                painter = painterResource(R.drawable.schweiz),
-                contentDescription = "Switzerland is GOAT"
+                painter = painterResource(R.drawable.levifriends),
+                contentDescription = "Switzerland is GOAT",
+                modifier = Modifier
+                    .padding(15.dp)
+
+
+
+
             )
 
         }
 
-    }
+        Column(verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            QuitButton()
 
+        }
+
+    }
     @Preview(showBackground = true)
     @Composable
     fun GreetingPreview() {
