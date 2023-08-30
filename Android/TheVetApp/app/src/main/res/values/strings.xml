@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TheVetApp</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="title_activity_detail">DetailActivity</string>
 </resources>

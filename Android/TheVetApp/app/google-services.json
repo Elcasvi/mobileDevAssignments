@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "792148060174",
+    "project_id": "the-vet-app-68622",
+    "storage_bucket": "the-vet-app-68622.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792148060174:android:9f5f6ec9d13a9d534cb45f",
+        "android_client_info": {
+          "package_name": "com.example.thevetapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792148060174-gbe8jhjuo5pkkkve5ie1aevloh3aknik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNF-3oXyoWQ47cPGlJ6dZI8mK8-E0FXfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792148060174-gbe8jhjuo5pkkkve5ie1aevloh3aknik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792148060174:android:0de70a8a6321ecd54cb45f",
+        "android_client_info": {
+          "package_name": "com.virtualtek.vetApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792148060174-gbe8jhjuo5pkkkve5ie1aevloh3aknik.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNF-3oXyoWQ47cPGlJ6dZI8mK8-E0FXfs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792148060174-gbe8jhjuo5pkkkve5ie1aevloh3aknik.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
