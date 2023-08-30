@@ -1,8 +1,10 @@
 package com.example.thevetapp
 
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -33,11 +35,36 @@ class MenuActivity : ComponentActivity() {
 
     private val db = Firebase.firestore
 
-    val animalList:MutableList<AnimalItem> = arrayListOf()
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val animalList:MutableList<AnimalItem> = arrayListOf()
+        val animalListDummy = listOf(
+            AnimalItem("Dog", "Buddy", "3 years", "15 kg"),
+            AnimalItem("Cat", "Whiskers", "2 years", "5 kg"),
+            AnimalItem("Elephant", "Dumbo", "10 years", "5000 kg")
+        )
+
+        //Get
+        db.collection("animals")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    val animalItem = AnimalItem()
+                    Log.d(ContentValues.TAG, "${document.id} => ${document.data}")
+
+                    animalItem.race=document.data.get("race").toString()
+                    animalItem.name=document.data.get("name").toString()
+                    animalItem.age=document.data.get("age").toString()
+                    animalItem.weight=document.data.get("weight").toString()
+                    animalList.add(animalItem)
+                }
+                for(animal in animalList)
+                {
+                    Log.e("Inside MenuActivity",animal.name)
+                }
+            }
+
         setContent {
             TheVetAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -45,61 +72,32 @@ class MenuActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ListOfAnimals()
-                    //MyColumnWithList(animalList)
+
+                    //ListOfAnimals(animalListDummy)
+                    if(animalList.size==0)
+                        Toast.makeText(this,"Empty list",Toast.LENGTH_LONG).show()
+                    else
+                        Toast.makeText(this,"Populated list size: ${animalList.size}",Toast.LENGTH_LONG).show()
+                    MyColumnWithList(animalList)
                 }
             }
-        }
-        //Get
-        db.collection("animals")
-            .get()
-            .addOnSuccessListener { result ->
-            for (document in result) {
-                val animalItem = AnimalItem()
-                Log.d(ContentValues.TAG, "${document.id} => ${document.data}")
-                val animalRace:String = document.data.get("race").toString()
-                val animalName:String = document.data.get("name").toString()
-                val animalAge:String = document.data.get("age").toString()
-                val animalWeight:String = document.data.get("weight").toString()
-
-                animalItem.race=animalRace
-                animalItem.name=animalName
-                animalItem.age=animalAge
-                animalItem.weight=animalWeight
-                animalList.add(animalItem)
-            }
-                /*
-                for (animal in animalList){
-                    Log.d("Tag","race: ${animal.race}")
-                    Log.d("Tag","name: ${animal.name}")
-                    Log.d("Tag","age: ${animal.age}")
-                    Log.d("Tag","weight: ${animal.weight}")
-                }
-
-                 */
-
         }
     }
 
     @Composable
-    fun AnimalRow(animal: MenuActivity.AnimalItem) {
-        Text(text = animal.name)
-    }
-
-
-    @Composable
-    fun ListOfAnimals() {
-        Column {
+    fun AnimalRow(animal: AnimalItem) {
+        Row {
+            Text(text = animal.name)
             Button(onClick = {
-            for (animal in animalList){
-                Log.d("Tag","race: ${animal.race}")
-                Log.d("Tag","name: ${animal.name}")
-                Log.d("Tag","age: ${animal.age}")
-                Log.d("Tag","weight: ${animal.weight}")}
+                val intent= Intent(this@MenuActivity,DetailActivity::class.java)
+                intent.putExtra("name",animal.name)
+                startActivity(intent)
             }) {
-
+                Text(text = "Edit")
             }
         }
+
+
     }
 
     @Composable
