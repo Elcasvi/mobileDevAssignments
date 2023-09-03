@@ -12,12 +12,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.thevetapp.ui.theme.TheVetAppTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class DetailActivity : ComponentActivity() {
+    data class AnimalItem(
+        var race: String = "",
+        var name: String = "",
+        var age: String = "",
+        var weight: String = ""
+    )
+
     private val db = Firebase.firestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +34,7 @@ class DetailActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting2("Android")
+                    myAnimal()
                 }
             }
         }
@@ -59,6 +65,12 @@ class DetailActivity : ComponentActivity() {
         {
             Text(text = "Db post")
         }
+    }
+    
+    @Composable
+    fun myAnimal()
+    {
+        Text(text="")
     }
 
     @Composable

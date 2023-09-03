@@ -4,25 +4,30 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.example.thevetapp.ui.theme.TheVetAppTheme
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+
+
 
 
 class MenuActivity : ComponentActivity() {
@@ -32,19 +37,33 @@ class MenuActivity : ComponentActivity() {
         var age: String = "",
         var weight: String = ""
     )
-
     private val db = Firebase.firestore
+    private val animalList:MutableList<AnimalItem> = arrayListOf()
+
+    val animalListDummy = listOf(
+        AnimalItem("Dog", "Buddy", "3 years", "15 kg"),
+        AnimalItem("Cat", "Whiskers", "2 years", "5 kg"),
+        AnimalItem("Elephant", "Dumbo", "10 years", "5000 kg")
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        fetchListFromFireBase()
+        setContent {
+            TheVetAppTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
 
-        val animalList:MutableList<AnimalItem> = arrayListOf()
-        val animalListDummy = listOf(
-            AnimalItem("Dog", "Buddy", "3 years", "15 kg"),
-            AnimalItem("Cat", "Whiskers", "2 years", "5 kg"),
-            AnimalItem("Elephant", "Dumbo", "10 years", "5000 kg")
-        )
+                    AnimalList(list = animalList)
+                }
+            }
+        }
+    }
 
+    private fun fetchListFromFireBase() {
         //Get
         db.collection("animals")
             .get()
@@ -59,55 +78,54 @@ class MenuActivity : ComponentActivity() {
                     animalItem.weight=document.data.get("weight").toString()
                     animalList.add(animalItem)
                 }
-                for(animal in animalList)
-                {
-                    Log.e("Inside MenuActivity",animal.name)
+                setContent{
+                    AnimalList(list = animalList)
                 }
             }
+    }
+    @Composable
+    fun AnimalItemCard(animal: AnimalItem) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Race: ${animal.race}",
+                    style = TextStyle(fontWeight = FontWeight.Bold)
+                )
+                Text(text = "Name: ${animal.name}")
+                Text(text = "Age: ${animal.age}")
+                Text(text = "Weight: ${animal.weight}")
 
-        setContent {
-            TheVetAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-
-                    //ListOfAnimals(animalListDummy)
-                    if(animalList.size==0)
-                        Toast.makeText(this,"Empty list",Toast.LENGTH_LONG).show()
-                    else
-                        Toast.makeText(this,"Populated list size: ${animalList.size}",Toast.LENGTH_LONG).show()
-                    MyColumnWithList(animalList)
+                Button(onClick = {
+                    val intent= Intent(this@MenuActivity,DetailActivity::class.java)
+                    intent.putExtra("name",animal.name)
+                    startActivity(intent)
+                }) {
+                    Text(text = "Edit")
                 }
+
             }
         }
     }
 
     @Composable
-    fun AnimalRow(animal: AnimalItem) {
-        Row {
-            Text(text = animal.name)
-            Button(onClick = {
-                val intent= Intent(this@MenuActivity,DetailActivity::class.java)
-                intent.putExtra("name",animal.name)
-                startActivity(intent)
-            }) {
-                Text(text = "Edit")
-            }
-        }
-
-
-    }
-
-    @Composable
-    fun MyColumnWithList(items: List<AnimalItem>) {
-        LazyColumn {
-            items(items) { item ->
-                AnimalRow(animal = item)
+    fun AnimalList(list: List<AnimalItem>) {
+        LazyColumn (modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ){
+            items(list) { item ->
+                AnimalItemCard(animal = item)
             }
         }
     }
+
+
+
 
 
 }

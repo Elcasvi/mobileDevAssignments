@@ -4,30 +4,42 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.compose.foundation.text.BasicTextField
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.example.thevetapp.ui.theme.TheVetAppTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.*
+
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth:FirebaseAuth
-    private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -37,77 +49,82 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    FlexCols()
+                    SimpleLoginForm()
                 }
             }
         }
         auth= Firebase.auth
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun RegisterUser() {
+    fun SimpleLoginForm(
+    ) {
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
 
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = email,
+                onValueChange = { email = it },
+                placeholder = { Text("Email") }
+            )
+
+            TextField(
+                value = password,
+                onValueChange = { password = it },
+                placeholder = { Text("Password") }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            RegisterUser(email,password)
+            LoginUser(email,password)
+        }
+    }
+
+    @Composable
+    fun RegisterUser(email:String,password:String) {
             Button(onClick = {
-                auth?.createUserWithEmailAndPassword("carlos@gmail.com","Developer09+")
+                auth?.createUserWithEmailAndPassword(email,password)
                     ?.addOnCompleteListener{task->
-                        if(task.isSuccessful)
-                            Toast.makeText(this@MainActivity,"Succesful",Toast.LENGTH_LONG).show()
+                        if(task.isSuccessful) {
+                            val navigate = Intent(this, MenuActivity::class.java)
+                            startActivity(navigate)
+                        }
                         else
-                            Toast.makeText(this@MainActivity,"Not Succesful: ${task.exception}",Toast.LENGTH_LONG).show()
-
+                            Toast.makeText(this@MainActivity,"Not Succesful: ${task.exception}",Toast.LENGTH_SHORT).show()
+                        Log.d("Tag","Not Succesful: ${task.exception}")
                     }
             })
             {
                     Text(text = "Register user")
             }
     }
-
     @Composable
-    fun PostDb()
+    fun LoginUser(email:String,password:String)
     {
         Button(onClick = {
-            // Create a new animal with a name, age and weight
-            val animal = hashMapOf(
-                "race" to "Cat",
-                "name" to "Gromy",
-                "age" to 1,
-                "weight" to 3
-            )
-
-            // Add a new document with a generated ID
-            db.collection("animals")
-                .add(animal)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
-
-        })
-        {
-            Text(text = "Db post")
-        }
-    }
-    @Composable
-    fun GetDb()
-    {
-        Button(onClick = {
-            //Get
-            db.collection("animals")
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        Log.d(TAG, "${document.id} => ${document.data}")
+            auth?.signInWithEmailAndPassword(email,password)
+                ?.addOnCompleteListener{task->
+                    if(task.isSuccessful) {
+                        val navigate = Intent(this, MenuActivity::class.java)
+                        startActivity(navigate)
                     }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents.", exception)
+                    else
+                        Toast.makeText(this@MainActivity,"Not Succesful: ${task.exception}",Toast.LENGTH_LONG).show()
                 }
         }) {
-            Text(text = "Db Get")
+            Text(text = "Log in")
         }
     }
+
 
     @Composable
     fun ToMenuAct()
@@ -120,16 +137,6 @@ class MainActivity : ComponentActivity() {
         }
 
     }
-    @Composable
-    fun FlexCols()
-    {
-        Row(horizontalArrangement = Arrangement.Center) {
-            Column {
-                RegisterUser()
-                PostDb()
-                GetDb()
-                ToMenuAct()
-            }
-        }
-    }
+
 }
+
