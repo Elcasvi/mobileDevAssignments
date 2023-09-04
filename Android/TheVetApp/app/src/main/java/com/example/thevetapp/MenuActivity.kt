@@ -1,35 +1,46 @@
 package com.example.thevetapp
-
 import android.content.ContentValues
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.thevetapp.ui.theme.TheVetAppTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-
-
-
-
 class MenuActivity : ComponentActivity() {
     data class AnimalItem(
         var race: String = "",
@@ -37,18 +48,12 @@ class MenuActivity : ComponentActivity() {
         var age: String = "",
         var weight: String = ""
     )
-    private val db = Firebase.firestore
-    private val animalList:MutableList<AnimalItem> = arrayListOf()
 
-    val animalListDummy = listOf(
-        AnimalItem("Dog", "Buddy", "3 years", "15 kg"),
-        AnimalItem("Cat", "Whiskers", "2 years", "5 kg"),
-        AnimalItem("Elephant", "Dumbo", "10 years", "5000 kg")
-    )
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fetchListFromFireBase()
+        //fetchListFromFireBase()
         setContent {
             TheVetAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -56,35 +61,38 @@ class MenuActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    AnimalList(list = animalList)
+                    //AnimalList(list = fetchListFromFireBase())
+                    Navigation()
                 }
             }
         }
     }
-
-    private fun fetchListFromFireBase() {
+    @Composable
+    private fun fetchListFromFireBase(): MutableState<List<AnimalItem>> {
+         val animalList = remember { mutableStateOf<List<AnimalItem>>(emptyList()) }
+        val tempAnimalList = mutableListOf<AnimalItem>()
         //Get
         db.collection("animals")
             .get()
             .addOnSuccessListener { result ->
+
                 for (document in result) {
                     val animalItem = AnimalItem()
                     Log.d(ContentValues.TAG, "${document.id} => ${document.data}")
 
-                    animalItem.race=document.data.get("race").toString()
-                    animalItem.name=document.data.get("name").toString()
-                    animalItem.age=document.data.get("age").toString()
-                    animalItem.weight=document.data.get("weight").toString()
-                    animalList.add(animalItem)
+                    animalItem.race = document.data.get("race").toString()
+                    animalItem.name = document.data.get("name").toString()
+                    animalItem.age = document.data.get("age").toString()
+                    animalItem.weight = document.data.get("weight").toString()
+                    tempAnimalList.add(animalItem)
                 }
-                setContent{
-                    AnimalList(list = animalList)
-                }
+                 animalList.value=tempAnimalList
             }
+        return animalList
     }
+
     @Composable
-    fun AnimalItemCard(animal: AnimalItem) {
+    fun AnimalItemCard(animal: AnimalItem,navController: NavHostController) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -102,24 +110,99 @@ class MenuActivity : ComponentActivity() {
                 Text(text = "Weight: ${animal.weight}")
 
                 Button(onClick = {
-                    val intent= Intent(this@MenuActivity,DetailActivity::class.java)
-                    intent.putExtra("name",animal.name)
-                    startActivity(intent)
+                    navController.navigate("editAnimalInterface/${animal}")
                 }) {
                     Text(text = "Edit")
                 }
-
             }
         }
     }
 
     @Composable
-    fun AnimalList(list: List<AnimalItem>) {
-        LazyColumn (modifier = Modifier.fillMaxSize(),
+    fun AnimalList(list: MutableState<List<AnimalItem>>, navController: NavHostController) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp)
-        ){
-            items(list) { item ->
-                AnimalItemCard(animal = item)
+        ) {
+            items(list.value) { item ->
+                AnimalItemCard(animal = item,navController)
+            }
+        }
+    }
+
+
+
+    @Composable
+    fun Navigation() {
+        // this will be the main manager for our views
+        // first we need to declare a controller
+        // the controller is the object in charge of changing the views
+        // and data exchange
+        //Get
+        val animalList=fetchListFromFireBase()
+        val navController = rememberNavController()
+
+        // a host is a structure in which several interfaces live
+        NavHost(
+            navController = navController,
+            startDestination = "mainMenu"
+        ) {
+            // within the navhost we are going to declare several composables to navigate
+            // using the composable macro
+            composable("mainMenu") {
+                MainMenu(
+                    animalList,
+                    navController,
+                    editAnimalInterfaceLogic = {
+                        navController.navigate("editAnimalInterface/animal")
+                    },
+                    addAnimalInterfaceLogic = {
+                        navController.navigate("addAnimalInterface")
+                    },
+                )
+            }
+            composable("editAnimalInterface/{name}",
+                arguments = listOf(
+                    navArgument("name") { type = NavType.StringType}
+                )
+            ) {
+                EditAnimalInterface(
+                    goBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable("addAnimalInterface") {
+                AddAnimalInterface(
+                    goBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+        }
+    }
+    @Composable
+    fun MainMenu(
+        animalList: MutableState<List<AnimalItem>>,
+        navController: NavHostController,
+        editAnimalInterfaceLogic: () -> Unit,
+        addAnimalInterfaceLogic: () -> Unit
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = editAnimalInterfaceLogic
+            ) {
+                Text("Edit")
+            }
+            Button(
+                onClick = addAnimalInterfaceLogic
+            ) {
+                Text("Add an animal")
+            }
+            AnimalList(list = animalList,navController)
             }
         }
     }
@@ -127,12 +210,123 @@ class MenuActivity : ComponentActivity() {
 
 
 
+@Composable
+fun EditAnimalInterface(
+    goBack: () -> Unit
+) {
+    val db = Firebase.firestore
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Button(onClick = {
+            // Create a new animal with a name, age and weight
+            val animal = hashMapOf(
+                "race" to "Crow",
+                "name" to "Crowy",
+                "age" to "8",
+                "weight" to "2"
+            )
 
+            // Add a new document with a generated ID
+            db.collection("animals")
+                .add(animal)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(ContentValues.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(ContentValues.TAG, "Error adding document", e)
+                }
+
+        })
+        {
+            Text(text = "Db post")
+        }
+        Button(
+            onClick = goBack
+        ) {
+            Text("go back")
+        }
+    }
 }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun AddAnimalInterface(
+        goBack: () -> Unit
+    ) {
+        val db = Firebase.firestore
+
+
+        var race by remember { mutableStateOf("") }
+        var name by remember { mutableStateOf("") }
+        var age by remember { mutableStateOf("") }
+        var weight by remember { mutableStateOf("") }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TextField(
+                value = race,
+                onValueChange = { race = it },
+                placeholder = { Text("race") }
+            )
+
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                placeholder = { Text("name") }
+            )
+            TextField(
+                value = age,
+                onValueChange = { age = it },
+                placeholder = { Text("age") }
+            )
+
+            TextField(
+                value = weight,
+                onValueChange = { weight = it },
+                placeholder = { Text("weight") }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
 
 
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = {
+                // Create a new animal with a name, age and weight
+                val animal = hashMapOf(
+                    "race" to race,
+                    "name" to name,
+                    "age" to age,
+                    "weight" to weight
+                )
 
+                // Add a new document with a generated ID
+                db.collection("animals")
+                    .add(animal)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(ContentValues.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(ContentValues.TAG, "Error adding document", e)
+                    }
 
-
+            })
+            {
+                Text(text = "Db post")
+            }
+            Button(
+                onClick = goBack
+            ) {
+                Text("go back")
+            }
+        }
+    }

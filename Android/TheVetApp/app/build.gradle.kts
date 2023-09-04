@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.thevetapp"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.thevetapp"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -66,6 +66,11 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
 
+
+    implementation("androidx.navigation:navigation-compose:2.7.1")
+    implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
 
 
     testImplementation("junit:junit:4.13.2")
