@@ -1,7 +1,9 @@
 package com.example.thevetapp
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -56,7 +59,6 @@ class MenuActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //fetchListFromFireBase()
         setContent {
             TheVetAppTheme {
                 // A surface container using the 'background' color from the theme
@@ -69,6 +71,8 @@ class MenuActivity : ComponentActivity() {
             }
         }
     }
+
+
     @Composable
     private fun fetchListFromFireBase(): MutableState<List<AnimalItem>> {
          val animalList = remember { mutableStateOf<List<AnimalItem>>(emptyList()) }
@@ -180,9 +184,6 @@ class MenuActivity : ComponentActivity() {
                 )
             }
 
-
-            
-
             composable("addAnimalInterface") {
                 AddAnimalInterface(
                     goBack = {
@@ -213,107 +214,107 @@ class MenuActivity : ComponentActivity() {
             Button(
                 onClick = addAnimalInterfaceLogic
             ) {
-                Text("Add an animal")
+                Text("Add new animal")
             }
             AnimalList(list = animalList,navController)
             }
         }
-    }
 
 
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EditAnimalInterface(
-    goBack: () -> Unit,
-    animal: String?
-) {
-    val db = Firebase.firestore
-    val idRegex=Regex("id=([^,]+)")
-    val raceRegex = Regex("race=([^,]+)")
-    val nameRegex = Regex("name=([^,]+)")
-    val ageRegex = Regex("age=([^,]+)")
-    val weightRegex = Regex("weight=([^\\)]+)")
-
-    val idMatch = idRegex.find(animal.toString())
-    val raceMatch = raceRegex.find(animal.toString())
-    val nameMatch = nameRegex.find(animal.toString())
-    val ageMatch = ageRegex.find(animal.toString())
-    val weightMatch = weightRegex.find(animal.toString())
-    
-    val id= idMatch?.groupValues?.get(1)?:""
-    
-    var race by remember{ mutableStateOf(raceMatch?.groupValues?.get(1) ?: "") }
-    var name by remember{ mutableStateOf( nameMatch?.groupValues?.get(1) ?: "")}
-    var age by remember{ mutableStateOf( ageMatch?.groupValues?.get(1) ?: "")}
-    var weight by remember{ mutableStateOf( weightMatch?.groupValues?.get(1) ?: "")}
-
-
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun EditAnimalInterface(
+        goBack: () -> Unit,
+        animal: String?
     ) {
-        Text(text = "id:$id")
-        TextField(
-            value = race,
-            onValueChange = { race = it },
-            placeholder = { Text("Race") }
-        )
+        val db = Firebase.firestore
+        val idRegex=Regex("id=([^,]+)")
+        val raceRegex = Regex("race=([^,]+)")
+        val nameRegex = Regex("name=([^,]+)")
+        val ageRegex = Regex("age=([^,]+)")
+        val weightRegex = Regex("weight=([^\\)]+)")
 
-        TextField(
-            value = name,
-            onValueChange = { name = it },
-            placeholder = { Text("Name") }
-        )
-        TextField(
-            value = age,
-            onValueChange = { age = it },
-            placeholder = { Text("Age") }
-        )
+        val idMatch = idRegex.find(animal.toString())
+        val raceMatch = raceRegex.find(animal.toString())
+        val nameMatch = nameRegex.find(animal.toString())
+        val ageMatch = ageRegex.find(animal.toString())
+        val weightMatch = weightRegex.find(animal.toString())
 
-        TextField(
-            value = weight,
-            onValueChange = { weight = it },
-            placeholder = { Text("Weight") }
-        )
+        val id= idMatch?.groupValues?.get(1)?:""
 
-        Button(onClick = {
-            // Create a new animal with a name, age and weight
+        var race by remember{ mutableStateOf(raceMatch?.groupValues?.get(1) ?: "") }
+        var name by remember{ mutableStateOf( nameMatch?.groupValues?.get(1) ?: "")}
+        var age by remember{ mutableStateOf( ageMatch?.groupValues?.get(1) ?: "")}
+        var weight by remember{ mutableStateOf( weightMatch?.groupValues?.get(1) ?: "")}
 
 
-            try {
-                val documentReference = db.collection("animals").document(id)
 
-                // Use FieldValue to only update specific fields you want to change
-                val animal = mapOf(
-                    "race" to race,
-                    "name" to name,
-                    "age" to age,
-                    "weight" to weight
-                )
-
-                // Update the document
-                documentReference.update(animal)
-            } catch (e: Exception) {
-                // Handle any exceptions here
-            }
-
-        })
-        {
-            Text(text = "Db post")
-        }
-        Button(
-            onClick = goBack
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("go back")
+            Text(text = "id:$id")
+            TextField(
+                value = race,
+                onValueChange = { race = it },
+                placeholder = { Text("Race") }
+            )
+
+            TextField(
+                value = name,
+                onValueChange = { name = it },
+                placeholder = { Text("Name") }
+            )
+            TextField(
+                value = age,
+                onValueChange = { age = it },
+                placeholder = { Text("Age") }
+            )
+
+            TextField(
+                value = weight,
+                onValueChange = { weight = it },
+                placeholder = { Text("Weight") }
+            )
+
+            Button(onClick = {
+                // Create a new animal with a name, age and weight
+                try {
+                    val documentReference = db.collection("animals").document(id)
+
+                    // Use FieldValue to only update specific fields you want to change
+                    val animal = mapOf(
+                        "race" to race,
+                        "name" to name,
+                        "age" to age,
+                        "weight" to weight
+                    )
+
+                    // Update the document
+                    documentReference.update(animal)
+                    val navigate = Intent(this@MenuActivity,MenuActivity::class.java)
+                    startActivity(navigate)
+                    finish()
+                } catch (e: Exception) {
+                    // Handle any exceptions here
+                }
+
+            })
+            {
+                Text(text = "Update")
+            }
+            Button(
+                onClick = goBack
+            ) {
+                Text("go back")
+            }
         }
+
     }
-}
 
 
 
@@ -382,6 +383,9 @@ fun EditAnimalInterface(
                     .add(animal)
                     .addOnSuccessListener { documentReference ->
                         Log.d(ContentValues.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                        val navigate = Intent(this@MenuActivity,MenuActivity::class.java)
+                        startActivity(navigate)
+                        finish()
                     }
                     .addOnFailureListener { e ->
                         Log.w(ContentValues.TAG, "Error adding document", e)
@@ -389,7 +393,7 @@ fun EditAnimalInterface(
 
             })
             {
-                Text(text = "Db post")
+                Text(text = "Register")
             }
             Button(
                 onClick = goBack
@@ -398,3 +402,5 @@ fun EditAnimalInterface(
             }
         }
     }
+
+}

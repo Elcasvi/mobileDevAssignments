@@ -94,6 +94,7 @@ class MainActivity : ComponentActivity() {
                         if(task.isSuccessful) {
                             val navigate = Intent(this, MenuActivity::class.java)
                             startActivity(navigate)
+
                         }
                         else
                             Toast.makeText(this@MainActivity,"Not Succesful: ${task.exception}",Toast.LENGTH_SHORT).show()
