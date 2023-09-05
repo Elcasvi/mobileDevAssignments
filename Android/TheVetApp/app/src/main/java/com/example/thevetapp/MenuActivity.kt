@@ -41,8 +41,11 @@ import androidx.navigation.navArgument
 import com.example.thevetapp.ui.theme.TheVetAppTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
+
 class MenuActivity : ComponentActivity() {
     data class AnimalItem(
+        var id:String="",
         var race: String = "",
         var name: String = "",
         var age: String = "",
@@ -61,7 +64,6 @@ class MenuActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    //AnimalList(list = fetchListFromFireBase())
                     Navigation()
                 }
             }
@@ -79,7 +81,7 @@ class MenuActivity : ComponentActivity() {
                 for (document in result) {
                     val animalItem = AnimalItem()
                     Log.d(ContentValues.TAG, "${document.id} => ${document.data}")
-
+                    animalItem.id=document.id
                     animalItem.race = document.data.get("race").toString()
                     animalItem.name = document.data.get("name").toString()
                     animalItem.age = document.data.get("age").toString()
@@ -101,6 +103,9 @@ class MenuActivity : ComponentActivity() {
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
+                Text(
+                    text = "Id: ${animal.id}"
+                )
                 Text(
                     text = "Race: ${animal.race}",
                     style = TextStyle(fontWeight = FontWeight.Bold)
@@ -161,17 +166,23 @@ class MenuActivity : ComponentActivity() {
                     },
                 )
             }
-            composable("editAnimalInterface/{name}",
+
+            composable("editAnimalInterface/{animal}",
                 arguments = listOf(
-                    navArgument("name") { type = NavType.StringType}
+                    navArgument("animal") { type = NavType.StringType}
                 )
-            ) {
+            ) {backStackEntry->
                 EditAnimalInterface(
                     goBack = {
                         navController.popBackStack()
-                    }
+                    },
+                    animal= backStackEntry.arguments?.getString("animal")
                 )
             }
+
+
+            
+
             composable("addAnimalInterface") {
                 AddAnimalInterface(
                     goBack = {
@@ -181,6 +192,8 @@ class MenuActivity : ComponentActivity() {
             }
         }
     }
+
+
     @Composable
     fun MainMenu(
         animalList: MutableState<List<AnimalItem>>,
@@ -210,32 +223,85 @@ class MenuActivity : ComponentActivity() {
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditAnimalInterface(
-    goBack: () -> Unit
+    goBack: () -> Unit,
+    animal: String?
 ) {
     val db = Firebase.firestore
+    val idRegex=Regex("id=([^,]+)")
+    val raceRegex = Regex("race=([^,]+)")
+    val nameRegex = Regex("name=([^,]+)")
+    val ageRegex = Regex("age=([^,]+)")
+    val weightRegex = Regex("weight=([^\\)]+)")
+
+    val idMatch = idRegex.find(animal.toString())
+    val raceMatch = raceRegex.find(animal.toString())
+    val nameMatch = nameRegex.find(animal.toString())
+    val ageMatch = ageRegex.find(animal.toString())
+    val weightMatch = weightRegex.find(animal.toString())
+    
+    val id= idMatch?.groupValues?.get(1)?:""
+    
+    var race by remember{ mutableStateOf(raceMatch?.groupValues?.get(1) ?: "") }
+    var name by remember{ mutableStateOf( nameMatch?.groupValues?.get(1) ?: "")}
+    var age by remember{ mutableStateOf( ageMatch?.groupValues?.get(1) ?: "")}
+    var weight by remember{ mutableStateOf( weightMatch?.groupValues?.get(1) ?: "")}
+
+
+
     Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "id:$id")
+        TextField(
+            value = race,
+            onValueChange = { race = it },
+            placeholder = { Text("Race") }
+        )
+
+        TextField(
+            value = name,
+            onValueChange = { name = it },
+            placeholder = { Text("Name") }
+        )
+        TextField(
+            value = age,
+            onValueChange = { age = it },
+            placeholder = { Text("Age") }
+        )
+
+        TextField(
+            value = weight,
+            onValueChange = { weight = it },
+            placeholder = { Text("Weight") }
+        )
+
         Button(onClick = {
             // Create a new animal with a name, age and weight
-            val animal = hashMapOf(
-                "race" to "Crow",
-                "name" to "Crowy",
-                "age" to "8",
-                "weight" to "2"
-            )
 
-            // Add a new document with a generated ID
-            db.collection("animals")
-                .add(animal)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(ContentValues.TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(ContentValues.TAG, "Error adding document", e)
-                }
+
+            try {
+                val documentReference = db.collection("animals").document(id)
+
+                // Use FieldValue to only update specific fields you want to change
+                val animal = mapOf(
+                    "race" to race,
+                    "name" to name,
+                    "age" to age,
+                    "weight" to weight
+                )
+
+                // Update the document
+                documentReference.update(animal)
+            } catch (e: Exception) {
+                // Handle any exceptions here
+            }
 
         })
         {
@@ -248,6 +314,8 @@ fun EditAnimalInterface(
         }
     }
 }
+
+
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
