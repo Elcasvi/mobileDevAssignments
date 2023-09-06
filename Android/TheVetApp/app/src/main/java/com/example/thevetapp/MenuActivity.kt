@@ -162,9 +162,6 @@ class MenuActivity : ComponentActivity() {
                 MainMenu(
                     animalList,
                     navController,
-                    editAnimalInterfaceLogic = {
-                        navController.navigate("editAnimalInterface/animal")
-                    },
                     addAnimalInterfaceLogic = {
                         navController.navigate("addAnimalInterface")
                     },
@@ -199,18 +196,12 @@ class MenuActivity : ComponentActivity() {
     fun MainMenu(
         animalList: MutableState<List<AnimalItem>>,
         navController: NavHostController,
-        editAnimalInterfaceLogic: () -> Unit,
         addAnimalInterfaceLogic: () -> Unit
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Button(
-                onClick = editAnimalInterfaceLogic
-            ) {
-                Text("Edit")
-            }
             Button(
                 onClick = addAnimalInterfaceLogic
             ) {

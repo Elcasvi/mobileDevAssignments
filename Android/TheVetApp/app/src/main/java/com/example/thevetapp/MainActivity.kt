@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 
 
 class MainActivity : ComponentActivity() {
@@ -76,6 +77,7 @@ class MainActivity : ComponentActivity() {
             TextField(
                 value = password,
                 onValueChange = { password = it },
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = { Text("Password") }
             )
 
