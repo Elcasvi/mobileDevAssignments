@@ -3,7 +3,6 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -44,12 +42,11 @@ import androidx.navigation.navArgument
 import com.example.thevetapp.ui.theme.TheVetAppTheme
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.tasks.await
 
 class MenuActivity : ComponentActivity() {
     data class AnimalItem(
         var id:String="",
-        var race: String = "",
+        var specie: String = "",
         var name: String = "",
         var age: String = "",
         var weight: String = ""
@@ -86,7 +83,7 @@ class MenuActivity : ComponentActivity() {
                     val animalItem = AnimalItem()
                     Log.d(ContentValues.TAG, "${document.id} => ${document.data}")
                     animalItem.id=document.id
-                    animalItem.race = document.data.get("race").toString()
+                    animalItem.specie = document.data.get("specie").toString()
                     animalItem.name = document.data.get("name").toString()
                     animalItem.age = document.data.get("age").toString()
                     animalItem.weight = document.data.get("weight").toString()
@@ -111,7 +108,7 @@ class MenuActivity : ComponentActivity() {
                     text = "Id: ${animal.id}"
                 )
                 Text(
-                    text = "Race: ${animal.race}",
+                    text = "Specie: ${animal.specie}",
                     style = TextStyle(fontWeight = FontWeight.Bold)
                 )
                 Text(text = "Name: ${animal.name}")
@@ -221,20 +218,20 @@ class MenuActivity : ComponentActivity() {
     ) {
         val db = Firebase.firestore
         val idRegex=Regex("id=([^,]+)")
-        val raceRegex = Regex("race=([^,]+)")
+        val specieRegex = Regex("specie=([^,]+)")
         val nameRegex = Regex("name=([^,]+)")
         val ageRegex = Regex("age=([^,]+)")
         val weightRegex = Regex("weight=([^\\)]+)")
 
         val idMatch = idRegex.find(animal.toString())
-        val raceMatch = raceRegex.find(animal.toString())
+        val raceMatch = specieRegex.find(animal.toString())
         val nameMatch = nameRegex.find(animal.toString())
         val ageMatch = ageRegex.find(animal.toString())
         val weightMatch = weightRegex.find(animal.toString())
 
         val id= idMatch?.groupValues?.get(1)?:""
 
-        var race by remember{ mutableStateOf(raceMatch?.groupValues?.get(1) ?: "") }
+        var specie by remember{ mutableStateOf(raceMatch?.groupValues?.get(1) ?: "") }
         var name by remember{ mutableStateOf( nameMatch?.groupValues?.get(1) ?: "")}
         var age by remember{ mutableStateOf( ageMatch?.groupValues?.get(1) ?: "")}
         var weight by remember{ mutableStateOf( weightMatch?.groupValues?.get(1) ?: "")}
@@ -250,8 +247,8 @@ class MenuActivity : ComponentActivity() {
         ) {
             Text(text = "id:$id")
             TextField(
-                value = race,
-                onValueChange = { race = it },
+                value = specie,
+                onValueChange = { specie = it },
                 placeholder = { Text("Race") }
             )
 
@@ -279,7 +276,7 @@ class MenuActivity : ComponentActivity() {
 
                     // Use FieldValue to only update specific fields you want to change
                     val animal = mapOf(
-                        "race" to race,
+                        "race" to specie,
                         "name" to name,
                         "age" to age,
                         "weight" to weight
@@ -317,7 +314,7 @@ class MenuActivity : ComponentActivity() {
         val db = Firebase.firestore
 
 
-        var race by remember { mutableStateOf("") }
+        var specie by remember { mutableStateOf("") }
         var name by remember { mutableStateOf("") }
         var age by remember { mutableStateOf("") }
         var weight by remember { mutableStateOf("") }
@@ -330,8 +327,8 @@ class MenuActivity : ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
-                value = race,
-                onValueChange = { race = it },
+                value = specie,
+                onValueChange = { specie = it },
                 placeholder = { Text("race") }
             )
 
@@ -363,7 +360,7 @@ class MenuActivity : ComponentActivity() {
             Button(onClick = {
                 // Create a new animal with a name, age and weight
                 val animal = hashMapOf(
-                    "race" to race,
+                    "specie" to specie,
                     "name" to name,
                     "age" to age,
                     "weight" to weight
