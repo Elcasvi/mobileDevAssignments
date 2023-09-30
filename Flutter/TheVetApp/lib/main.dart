@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:the_vet_app/Register.dart';
@@ -40,16 +41,42 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  void handleLogin()
+  void handleLogin() async
   {
     print("inside the login btn");
+    try {
+      final user = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+          email: email.text, password: password.text);
+      print("USER LOGGED IN: ${user.user?.uid}");
+    } catch (e) {
+      print(e);
+    }
   }
-  void handleRegister()
+  void handleRegister()async
   {
     print("inside the register btn");
+    try {
+      final user = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+          email: email.text, password: password.text);
+      print("USER CREATED: ${user.user?.uid}");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print("your password is weak and so are you.");
+      } else if (e.code == 'email-already-in-use') {
+        print("account exists.");
+      }
+    } catch (e) {
+      print(e);
+    }
+    /*
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context)=>const Register()),
     );
+     */
+
+
   }
   @override
   void initState() {
