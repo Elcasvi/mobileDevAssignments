@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'CreateAnimalScreen.dart';
 import 'DetailScreen.dart';// Import the Fluttertoast package
 class Menu extends StatelessWidget{
   const Menu({super.key});
@@ -65,6 +66,18 @@ class _AnimalMenu extends State<AnimalMenu> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to the create animal screen when the button is pressed
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateAnimalScreen(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
