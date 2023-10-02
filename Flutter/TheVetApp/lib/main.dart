@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:the_vet_app/Register.dart';
 
+import 'MenuScreen.dart';
 import 'firebase_options.dart';
 
 Future<void>main() async{
@@ -40,7 +41,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-
+  void goToScreen()
+  {
+    Navigator.of(context).push(
+        MaterialPageRoute(
+        builder: (context) => const Menu()));
+  }
   void handleLogin() async
   {
     print("inside the login btn");
@@ -48,11 +54,13 @@ class _LoginPageState extends State<LoginPage> {
       final user = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
           email: email.text, password: password.text);
+      goToScreen();
       print("USER LOGGED IN: ${user.user?.uid}");
     } catch (e) {
       print(e);
     }
   }
+
   void handleRegister()async
   {
     print("inside the register btn");
@@ -60,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       final user = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
           email: email.text, password: password.text);
+      goToScreen();
       print("USER CREATED: ${user.user?.uid}");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
