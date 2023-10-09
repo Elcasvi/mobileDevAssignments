@@ -19,6 +19,7 @@ class DetailScreen extends StatelessWidget {
           children: <Widget>[
             Text('Name: ${animal.name}'),
             Text('Species: ${animal.species}'),
+            Text('Breed: ${animal.breed}'),
             Text('Age: ${animal.age} years'),
             // Add more details as needed
           ],

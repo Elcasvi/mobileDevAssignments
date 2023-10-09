@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'CreateAnimalScreen.dart';
-import 'DetailScreen.dart';// Import the Fluttertoast package
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'DetailScreen.dart';
+
+
 class Menu extends StatelessWidget{
   const Menu({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,20 +28,19 @@ class AnimalMenu extends StatefulWidget{
 }
 
 class Animal {
-  Animal({required this.name, required this.species, required this.age});
+  Animal({required this.name, required this.species,required this.breed, required this.age});
   String name;
   String species;
+  String breed;
   int age;
 }
 
 class _AnimalMenu extends State<AnimalMenu> {
-  // Define a list of Animal objects
-  final List<Animal> animals = [
-    Animal(name: 'Buddy', species: 'Dog', age: 3),
-    Animal(name: 'Whiskers', species: 'Cat', age: 2),
-    Animal(name: 'Dumbo', species: 'Elephant', age: 10),
-    // Add more Animal objects as needed
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Stream<QuerySnapshot> getAnimalsStream() {
+    return _firestore.collection('animals').snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,33 +49,55 @@ class _AnimalMenu extends State<AnimalMenu> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-        itemCount: animals.length,
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailScreen(animal: animals[index]),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: getAnimalsStream(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+
+          final List<Animal> animals = snapshot.data!.docs.map((DocumentSnapshot doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return Animal(
+              name: data['name'],
+              species: data['species'],
+              breed: data['breed'],
+              age: data['age'],
+            );
+          }).toList();
+
+          return ListView.builder(
+            itemCount: animals.length,
+            itemBuilder: (BuildContext context, int index) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailScreen(animal: animals[index]),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  title: Text(animals[index].name),
+                  subtitle: Text('Species: ${animals[index].species}, Breed: ${animals[index].breed}, Age: ${animals[index].age} years'),
+                  // Add any other properties or actions you want for each list item
                 ),
               );
             },
-            child: ListTile(
-              title: Text(animals[index].name),
-              subtitle: Text('Species: ${animals[index].species}, Age: ${animals[index].age} years'),
-              // Add any other properties or actions you want for each list item
-            ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to the create animal screen when the button is pressed
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateAnimalScreen(),
+              builder: (context) => const CreateAnimalScreen(),
             ),
           );
         },

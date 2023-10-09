@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:the_vet_app/Register.dart';
-
 import 'MenuScreen.dart';
 import 'firebase_options.dart';
 
@@ -147,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 controller: password,
+                obscureText: true,
               ),
             ),
             Container(
