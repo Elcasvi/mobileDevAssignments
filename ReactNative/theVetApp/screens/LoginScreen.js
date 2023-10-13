@@ -2,12 +2,10 @@ import {Alert, Button, SafeAreaView, Text, TextInput} from "react-native";
 import {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword}from 'firebase/auth';
-import {initializeApp} from 'firebase/app';
-import {firebaseConfig} from "../firebase-config";
+import {app} from "../firebase-config";
 
 export default function LoginScreen()
 {
-    const app=initializeApp(firebaseConfig)
     const auth=getAuth(app)
 
     const[password,setPassword]=useState("")

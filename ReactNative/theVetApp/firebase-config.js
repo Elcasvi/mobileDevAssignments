@@ -1,4 +1,5 @@
-export const firebaseConfig = {
+import {initializeApp} from 'firebase/app';
+const firebaseConfig = {
     apiKey: "AIzaSyCaimXO0B6KK4HBZTBJY7Y2NZI6ndcamok",
     authDomain: "thevetapp-reactnative.firebaseapp.com",
     projectId: "thevetapp-reactnative",
@@ -6,3 +7,4 @@ export const firebaseConfig = {
     messagingSenderId: "102190443241",
     appId: "1:102190443241:web:f3e5087461c173f6ca9e78"
 };
+export const app=initializeApp(firebaseConfig);
