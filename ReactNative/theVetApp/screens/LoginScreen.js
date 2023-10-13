@@ -1,19 +1,45 @@
-import {Button, SafeAreaView, Text, TextInput} from "react-native";
+import {Alert, Button, SafeAreaView, Text, TextInput} from "react-native";
 import {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword}from 'firebase/auth';
+import {initializeApp} from 'firebase/app';
+import {firebaseConfig} from "../firebase-config";
 
 export default function LoginScreen()
 {
+    const app=initializeApp(firebaseConfig)
+    const auth=getAuth(app)
+
     const[password,setPassword]=useState("")
     const[email,setEmail]=useState("")
     const {navigate}=useNavigation();
     const handleLoginBtn=()=>
     {
-        navigate("MenuScreen");
+        signInWithEmailAndPassword(auth,email,password)
+            .then(()=>
+            {
+                console.log("Sign in!")
+                navigate("MenuScreen");
+            })
+            .catch(error=>{
+                Alert.alert("",error)
+                console.log(error)
+            })
+
     }
     const handleRegisterBtn=()=>
     {
-        navigate("MenuScreen");
+        createUserWithEmailAndPassword(auth,email,password)
+            .then(()=>
+            {
+                console.log("Account created")
+                navigate("MenuScreen");
+            })
+            .catch(error=>{
+                Alert.alert("",error)
+                console.log(error)
+            })
+
     }
     return(
         <SafeAreaView style={{ flex: 1, alignItems: 'center', padding: 10 }}>
