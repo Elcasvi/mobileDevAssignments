@@ -41,15 +41,59 @@ export default function CreateAnimalScreen() {
 
     return (
         <SafeAreaView style={{ flex: 1, alignItems: 'center', padding: 10 }}>
-            <Text>Create Animal</Text>
-            <TextInput placeholder={"Name"} onChangeText={setName} />
-            <TextInput placeholder={"Specie"} onChangeText={setSpecie} />
-            <TextInput placeholder={"Breed"} onChangeText={setBreed} />
-            <TextInput placeholder={"Age"} onChangeText={setAge} />
+            <Text style={{ fontSize: 24, fontWeight: 'bold' }}>Create Animal</Text>
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                placeholder="Name"
+                onChangeText={setName}
+            />
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                placeholder="Specie"
+                onChangeText={setSpecie}
+            />
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                placeholder="Breed"
+                onChangeText={setBreed}
+            />
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                placeholder="Age"
+                onChangeText={setAge}
+            />
             <Button
-                style={{ width: "50%", margin: 10 }}
+                style={{ width: '50%', margin: 10 }}
                 mode="contained"
-                title={"Add"}
+                title="Add"
                 onPress={handleAddAnimalBtn}
             />
         </SafeAreaView>

@@ -40,12 +40,52 @@ export default function LoginScreen()
 
     }
     return(
-        <SafeAreaView style={{ flex: 1, alignItems: 'center', padding: 10 }}>
-            <Text>Login Screen</Text>
-            <TextInput placeholder={"Email"} onChangeText={setEmail}/>
-            <TextInput secureTextEntry={true} placeholder={"Password"} onChangeText={setPassword}/>
-            <Button style={{width: "50%", margin: 10 }} mode="contained" title={"Login"} onPress={handleLoginBtn}/>
-            <Button style={{width: "50%" }} mode="outlined" title={"Register"} onPress={handleRegisterBtn}/>
+        <SafeAreaView style={{ flex: 1, alignItems: 'center', padding: 20 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Login Screen</Text>
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                placeholder="Email"
+                onChangeText={setEmail}
+            />
+            <TextInput
+                style={{
+                    width: '80%',
+                    marginBottom: 15,
+                    padding: 10,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    borderRadius: 5,
+                }}
+                secureTextEntry={true}
+                placeholder="Password"
+                onChangeText={setPassword}
+            />
+            <Button
+                style={{
+                    width: '80%',
+                    marginVertical: 10,
+                }}
+                mode="contained"
+                title="Login"
+                onPress={handleLoginBtn}
+            />
+            <Button
+                style={{
+                    width: '80%',
+                    marginVertical: 10,
+                }}
+                mode="outlined"
+                title="Register"
+                onPress={handleRegisterBtn}
+            />
         </SafeAreaView>
+
     )
 }

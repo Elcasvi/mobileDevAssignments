@@ -53,7 +53,7 @@ class _AnimalMenu extends State<AnimalMenu> {
         stream: getAnimalsStream(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
 
           if (snapshot.hasError) {
@@ -82,10 +82,20 @@ class _AnimalMenu extends State<AnimalMenu> {
                     ),
                   );
                 },
-                child: ListTile(
-                  title: Text(animals[index].name),
-                  subtitle: Text('Species: ${animals[index].species}, Breed: ${animals[index].breed}, Age: ${animals[index].age} years'),
-                  // Add any other properties or actions you want for each list item
+                child: Container(
+                  color: Colors.lightBlue, // Add your desired background color here
+                  padding: EdgeInsets.all(10),
+                  child: ListTile(
+                    title: Text(
+                      animals[index].name,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      'Species: ${animals[index].species}, Breed: ${animals[index].breed}, Age: ${animals[index].age} years',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    // Add any other properties or actions you want for each list item
+                  ),
                 ),
               );
             },
@@ -105,4 +115,5 @@ class _AnimalMenu extends State<AnimalMenu> {
       ),
     );
   }
+
 }

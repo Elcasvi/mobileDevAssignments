@@ -7,9 +7,13 @@ export default function AnimalDetailsScreen()
     const{params}=route;
     const animal=params.animal;
     return(
-        <SafeAreaView>
-            <Text>Animal Detail Screen</Text>
-            <Text>{animal.name}</Text>
+        <SafeAreaView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Animal Detail Screen</Text>
+            <Text style={{ fontSize: 18 }}>Name: {animal.name}</Text>
+            <Text style={{ fontSize: 18 }}>Specie: {animal.specie}</Text>
+            <Text style={{ fontSize: 18 }}>Breed: {animal.breed}</Text>
+            <Text style={{ fontSize: 18 }}>Age: {animal.age}</Text>
         </SafeAreaView>
+
     )
 }

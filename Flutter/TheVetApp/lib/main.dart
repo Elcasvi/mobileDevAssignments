@@ -108,18 +108,18 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: "email",
-                  border: OutlineInputBorder( // Customize the border
-                    borderRadius: BorderRadius.circular(10.0), // Border radius
+                  labelText: "Email",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.blue, // Label text color
+                    color: Colors.blue,
                   ),
-                  hintText: "Enter your email", // Hint text
+                  hintText: "Enter your email",
                   hintStyle: TextStyle(
-                    color: Colors.grey, // Hint text color
+                    color: Colors.grey,
                   ),
-                  focusedBorder: OutlineInputBorder( // Border when focused
+                  focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blue),
                   ),
                 ),
@@ -130,18 +130,18 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextField(
                 decoration: InputDecoration(
-                  labelText: "password",
-                  border: OutlineInputBorder( // Customize the border
-                    borderRadius: BorderRadius.circular(10.0), // Border radius
+                  labelText: "Password",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                   labelStyle: TextStyle(
-                    color: Colors.blue, // Label text color
+                    color: Colors.blue,
                   ),
-                  hintText: "Enter your password", // Hint text
+                  hintText: "Enter your password",
                   hintStyle: TextStyle(
-                    color: Colors.grey, // Hint text color
+                    color: Colors.grey,
                   ),
-                  focusedBorder: const OutlineInputBorder( // Border when focused
+                  focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.blue),
                   ),
                 ),
@@ -179,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextButton(
                 onPressed: () {
-                  // Add your login logic here
+                  // Add your registration logic here
                   handleRegister();
                 },
                 style: ButtonStyle(
@@ -207,5 +207,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 
 }
